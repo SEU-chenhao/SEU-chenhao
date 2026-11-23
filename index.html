@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="按年份、日期和题型练习党史国情知识竞赛赛题，提交后查看解析并回练错题。">
+  <meta name="theme-color" content="#711c30">
+  <title>党史国情知识竞赛复习题库</title>
+  <link rel="stylesheet" href="./web/style.css">
+</head>
+<body>
+  <header class="masthead">
+    <div class="wrap top">
+      <div class="brand"><span class="brand-icon" aria-hidden="true"></span>竞赛复习题库</div>
+      <button type="button" class="text-button" id="show-sources">题库来源</button>
+    </div>
+  </header>
+  <section class="hero" aria-labelledby="page-title">
+    <div class="wrap hero-inner">
+      <div>
+        <p class="hero-label" id="publisher">东南大学交通学院 · 先行工作站</p>
+        <h1 id="page-title">党史国情知识竞赛复习题库</h1>
+        <p class="hero-meta" id="bank-period">赛题剧透</p>
+      </div>
+      <div class="hero-count"><strong id="bank-size"></strong><span>道练习题</span></div>
+    </div>
+  </section>
+  <p class="wrap main" id="loading" role="status">正在读取题库…</p>
+  <main class="wrap main" id="review" hidden>
+    <div class="controls">
+      <nav class="modes" aria-label="练习范围">
+        <button class="mode" type="button" data-mode="all">全部题目</button>
+        <button class="mode" type="button" data-mode="wrong">错题本 <span id="wrong-count">0</span></button>
+        <button class="mode" type="button" data-mode="saved">收藏 <span id="saved-count">0</span></button>
+      </nav>
+      <button type="button" class="outlined" id="order" aria-pressed="false">随机顺序</button>
+    </div>
+    <div class="filters" aria-label="筛选题目">
+      <label>年份<select id="year"></select></label>
+      <label>专题<select id="topic"></select></label>
+      <label>期次<select id="source"></select></label>
+      <label>题型<select id="kind"></select></label>
+    </div>
+    <div class="layout">
+      <section class="panel quiz" id="quiz" aria-label="答题区">
+        <div id="question"></div>
+        <p id="announcement" class="visually-hidden" role="status" aria-live="polite"></p>
+      </section>
+      <aside class="panel sidebar" aria-label="复习进度和答题卡">
+        <div class="side-head">
+          <h2>复习进度</h2><span>全题库</span>
+        </div>
+        <div class="stats">
+          <div><strong id="attempted">0</strong><span>已练习</span></div>
+          <div><strong id="accuracy">—</strong><span>最近正确率</span></div>
+        </div>
+        <progress id="progress" max="100" value="0" aria-label="已练习题数"></progress>
+        <div class="divider"></div>
+        <div class="side-head"><h2>答题卡</h2><span id="deck-size"></span></div>
+        <div class="grid-legend"><span class="legend correct">答对</span><span class="legend wrong">答错</span><span class="legend">未答</span></div>
+        <div class="number-grid" id="number-grid"></div>
+        <div class="grid-footer" id="grid-footer" hidden>
+          <button type="button" class="text-button" id="grid-prev" aria-label="上一组题号">上一组</button>
+          <span id="grid-page"></span>
+          <button type="button" class="text-button" id="grid-next" aria-label="下一组题号">下一组</button>
+        </div>
+      </aside>
+    </div>
+    <footer class="footer">
+      <span id="storage-note">复习记录保存在当前浏览器。</span>
+      <span>依据公众号文章整理</span>
+    </footer>
+  </main>
+  <dialog class="source-dialog" id="sources" aria-labelledby="sources-title">
+    <div class="source-head">
+      <div><h2 id="sources-title">题库来源</h2><p>赛题剧透｜党史国情提前学</p></div>
+      <form method="dialog"><button class="outlined" type="submit">关闭</button></form>
+    </div>
+    <p id="source-summary"></p>
+    <p id="source-note" hidden></p>
+    <ol id="source-list"></ol>
+  </dialog>
+  <noscript>请启用 JavaScript 后使用复习题库。</noscript>
+  <script type="module" src="./web/app.js"></script>
+</body>
+</html>
