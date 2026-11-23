@@ -283,6 +283,16 @@ function showSummary() {
   heading.focus();
 }
 
+function recordAnswer(question, response) {
+  const record = { response, correct: grade(question, response) };
+  results.set(question.id, record);
+  roundResults.set(question.id, record);
+  retryId = null;
+  render();
+  $("feedback-title").focus();
+  $("announcement").textContent = record.correct ? "回答正确" : "回答错误，已收录错题本";
+}
+
 function renderQuestion() {
   const host = $("question");
   host.replaceChildren();
@@ -305,11 +315,17 @@ function renderQuestion() {
   title.id = "question-title";
   title.tabIndex = -1;
   host.append(meta, title);
-  if (question.type === "multiple") host.append(make("p", "hint", "选出全部正确项后提交。"));
+  const multiSelect = !result && question.type === "multiple";
+  if (multiSelect) {
+    const hint = make("p", "hint", "选择 " + question.answer.length + " 项后自动判分。");
+    hint.id = "choice-hint";
+    host.append(hint);
+  }
 
   const form = make("form");
   const options = make("fieldset", "options");
   options.setAttribute("aria-labelledby", title.id);
+  if (multiSelect) options.setAttribute("aria-describedby", "choice-hint");
   if (question.type === "fill") {
     options.append(...question.fields.map((field, index) => makeField(field, index, result)));
   } else {
@@ -331,31 +347,27 @@ function renderQuestion() {
       renderQuestion();
       $("question-title").focus();
     }), next);
-  } else {
+  } else if (question.type === "fill") {
     const submit = make("button", "primary", "提交答案");
     submit.type = "submit";
-    const selected = () => {
-      const values = new FormData(form);
-      return question.type === "fill" ? values.getAll("fill") : values.getAll("option").map(Number);
-    };
-    function canSubmit(response) {
-      return response.length > 0 && (question.type !== "fill" || response.every(value => normalize(value)));
-    }
+    const selected = () => new FormData(form).getAll("fill");
+    const canSubmit = response => response.length === question.fields.length
+      && response.every(value => normalize(value));
     submit.disabled = true;
     form.addEventListener("input", () => { submit.disabled = !canSubmit(selected()); });
     form.addEventListener("submit", event => {
       event.preventDefault();
       const response = selected();
       if (!canSubmit(response)) return;
-      const record = { response, correct: grade(question, response) };
-      results.set(question.id, record);
-      roundResults.set(question.id, record);
-      retryId = null;
-      render();
-      $("feedback-title").focus();
-      $("announcement").textContent = record.correct ? "回答正确" : "回答错误，已收录错题本";
+      recordAnswer(question, response);
     });
     actions.append(next, submit);
+  } else {
+    options.addEventListener("change", () => {
+      const response = new FormData(form).getAll("option").map(Number);
+      if (response.length === question.answer.length) recordAnswer(question, response);
+    });
+    actions.append(next);
   }
   form.append(actions);
   const citation = make("p", "question-source", "来源　");
