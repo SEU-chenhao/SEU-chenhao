@@ -371,7 +371,10 @@ function renderQuestion() {
   }
   form.append(actions);
   const citation = make("p", "question-source", "来源　");
-  citation.append(link(source.id + " 原文 · 第" + question.number + "题", source.url));
+  const position = source.id + " · 第" + question.number + "题";
+  citation.append(source.url
+    ? link(source.id + " 原文 · 第" + question.number + "题", source.url)
+    : source.document + " · " + position);
   host.append(form, citation);
 }
 
@@ -436,7 +439,10 @@ $("grid-next").addEventListener("click", () => { gridPage++; renderSidebar(); })
 $("show-sources").addEventListener("click", () => $("sources").showModal());
 for (const source of bank.sources) {
   const row = make("li");
-  row.append(link(source.id + " 原文", source.url), make("span", "", source.topic + " · " + source.count + " 题"));
+  row.append(
+    source.url ? link(source.id + " 原文", source.url) : source.id + " " + source.document,
+    make("span", "", source.topic + " · " + source.count + " 题"),
+  );
   $("source-list").append(row);
 }
 $("bank-size").textContent = String(questions.size);
@@ -451,7 +457,7 @@ if (dates.length) {
   const end = first.slice(0, 4) === last.slice(0, 4) ? last.slice(5) : last;
   $("bank-period").textContent = "赛题剧透 · " + format(first) + (first === last ? "" : "—" + format(end));
 }
-$("source-summary").textContent = "收录 " + sources.size + " 篇推文正文，共 " + questions.size + " 题。";
+$("source-summary").textContent = "收录 " + sources.size + " 期赛题，共 " + questions.size + " 题。";
 if (bank.sourceNote) {
   $("source-note").textContent = bank.sourceNote;
   $("source-note").hidden = false;

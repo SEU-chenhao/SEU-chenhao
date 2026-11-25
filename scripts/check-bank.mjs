@@ -14,7 +14,8 @@ const counts = new Map();
 for (const source of sources) {
   assert.match(source.id, /^\d{4}-\d{2}-\d{2}$/);
   assert.ok(!counts.has(source.id), "重复的来源 ID " + source.id);
-  assert.ok(hasText(source.title) && hasText(source.topic) && isHttps(source.url), "来源信息不全 " + source.id);
+  const hasSource = source.url === undefined ? hasText(source.document) : isHttps(source.url);
+  assert.ok(hasText(source.title) && hasText(source.topic) && hasSource, "来源信息不全 " + source.id);
   counts.set(source.id, new Set());
 }
 
